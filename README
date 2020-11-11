@@ -1,0 +1,192 @@
+Nume: Dragne Lavinia-Stefana
+Grupa: 314 CA
+
+	METODE NUMERICE
+	Tema #1
+
+Acesta este fisierul README corespunzator prezentarii implementarii rezolvarilor mele la tema 1.
+
+	Continutul proiectului este urmatorul:
+
+-task1 contine directorul cu codurile sursa corespunzatoare task-ului 1
+
+-task2 contine directorul cu codurile sursa corespunzatoare task-ului 2
+
+-task3 contine directorul cu codurile sursa corespunzatoare task-ului 3
+
+-task4 contine directorul cu codurile sursa corespunzatoare task-ului 4
+
+-acest fisier README.
+
+	Prezentarea solutiei:
+
+	Task 1
+
+	-Generate_probabilities_system
+
+	Initializez matricea A cu 0.
+	Parcurg fiecare linie din matricea A si pentru fiecare linie k, pentru elementul k,
+aflu pe ce pozitie se afla in labirint. Tin cont ca daca era ultimul element de pe o 
+linie este un caz special. 
+	Toate numerele au, in mod normal, in labirint, 6 vecini:
+sus-stanga, sus-dreapta, stanga, dreapta, jos-stanga, jos-dreapta, iar acestia
+vor fi indexati in matricea A cu -1. Se tine cont daca elementul se afla in labirint
+pe prima coloana, ultima coloana, prima linie sau ultima linie, astfel va avea
+mai putini vecini. Pe pozitia A(k,k) va fi numarul de vecini ai fiecarui element.
+Contorul ok numara cati vecini are fiecare element.
+
+	-Matrix_to_csr
+	
+	Parcurg matricea A, in variabila ok retin daca am gasit primul element nenul
+de pe o linie. Variabila nz numara cate elemente nenule am in total. De fiecare data cand
+gasesc un element nenul ii retin coloana si valoarea si le memorez in vectorii
+colind, respectiv values. Primul element nenul de pe fiecare linie il retin in vectorul
+rowptr, iar la final adaug, pe ultima lui pozitie nz+1.
+
+	- Jacobi_factorization
+
+	N este matricea diagonala corespunzatoare lui A. P se obtine ca diferenta dintre
+N si A (pornind de la A = N - P). Calculez inversa matricei diagonale N si o inmultesc cu P
+pentru a obtine matricea de iteratie G_j, respectiv cu vectorul b, pentru a obtine
+vectorul de iteratie c_J.
+
+	- Jacobi_sparse
+
+	Initializez vectorul prev_x, vectorul initial cu care se aproximeaza solutia cu
+0 si cat timp eroare(err) este mai mica decat toleranta(tol) calculez, cu ajutorul functiei
+csr_multiplication, produsul dintre G_j, in forma CSR si prev_x. Reactualizez la fiecare
+iteratie prev_x.
+
+	Referinte:
+
+	Codul de la functiile Jacobi_factorization si Jacobi_sparse a fost explicat si 
+implementat de Radu Stoichitoiu la explicatiile pentru laboratorul 5.
+
+
+
+	Task 2
+
+	- Clustering_pc 
+
+	Initializez clusterele cu algoritmul descris in enunt, fiecare cluster 'i' va
+contine toate punctele mod NC = i.
+	In fiecare cluster voi adauga suma coordonatelor fiecarui punct din el si nu
+efectiv toate punctele. Pe masura ce adaug puncte, actualizez si suma. Calculez 
+centroizii dupa initializare.
+Cat timp noii centroizi nu sunt identici cu vechii centrozi voi continua algoritmul.
+Pentru fiecare punct caut centroidul cel mai apropiat, fac norma dintre punct si 
+cel mai apropiat centroid, iar apoi aflu care este norma minima si indicele corespunzator
+ei. Calculez noii centroizi si ii compar cu cei vechi. In vectorul number_clusters
+retin cate numere am in fiecare cluster, pentru a putea calcula centrozii, ca fiind
+raportul dintre suma coordonatelor punctelor, din clusterul i si numarul de puncte.
+
+	- Compute_cost_pc
+
+	Aflu cate clustere si cate puncte am. Parcurg fiecare punct si calculez distanta
+fata de fiecare centroid. In variabila min_dist retin si reactualizez distanta minima
+a fiecarui punct fata de centroid. Pentru fiecare punct adaug distanta minima la cost. 
+
+
+	Task 3
+
+	- rgbHistogram 
+
+	Extrag cu functia imread cele 3 matrici R, G, B corespunzatoare distributiei
+pixelilor pentru fiecare din cele 3 culori.
+	In variabila count retin lungimea unui interval. Pentru fiecare pixel din matrici
+calculez din ce interval face parte, dar vectorizat, facand asta pentru toti pixelii
+odata.
+	Redimensionez matricile pentru a facilita lucrul cu ele si pentru a fi mai usor
+de vectorizat, aducandu-le la vectori-coloana. In sol2 retin, folosindu-ma de functia
+accumarray, numarul de pixeli din fiecare interval, pentru fiecare culoare.
+Pe rand copiez, pe pozitiile corespunzatoare, valorile din sol2 in sol1, pentru a avea
+valorile pentru rosu-galben-albastru, in ordine, in vector. In final, solutia va fi
+vectorul sol1 transpus, pentru a obtine un vector linie. 
+
+
+	- hsvHistogram
+
+	Algoritmul este similar cu cel de la rgbHistogram, diferentele constau in:
+matricile H,S,V se obtin prin conversia matricile R,G,B corespunzatoare imaginilor,
+cu ajutorul functiei rgb2hsv. 
+	Functia rgb2hsv primeste matricile R,G,B corespunzatoare fiecarei imagini.
+Transforma matricile de pixeli, in matrici de indecsi. In continuare se foloseste
+algoritmul de conversie dat in enunt, vectorizat, aplicat pe matricile transformate
+in vectori-linie, pentru a fi mai usor de implementat.
+	Pentru fiecare din matricile h, s si v se scaleaza si se calculeaza din ce
+intervele fac parte elementele lor, urmand un algoritm similar cu cel de la rgb.
+
+	- Householder
+
+	Se initializeaza matricea Q, ortogonala, cu matricea unitate, de dimensiune 
+corespunzatoare. Se calculeaza lambdap, tinandu-se cont de semnul lui app.
+Se calculeaza reflectorii Householder. Se transforma coloanele p, (p+1):n respectiv
+1:n conform formulelor. In final, se returneaza valorile pentru matricile Q si R,
+matrice ortoganala, respectiv superior triunghiulara.
+
+	- SST
+
+	Se tine cont de faptul ca algoritmul se poate aplica doar pe matrici cu numar
+de linii mai mare sau egal cu cel de coloane.
+Calculez separat elementul de pe ultima pozitie, iar mai apoi pentru fiecare ecuatie din
+sistem, ea avand coeficientii reprezentati pe fiecare linie din A, se calculeaza solutia
+si se memoreaza in vectorul x.
+
+	- Preprocess 
+
+	Formez calea catre directorul cu poze cu pisici si memorez in name_img1 matricea
+corespunzatoare numelor imaginilor din folder. Initializez vectorul y cu 1. 
+Pentru fiecare imagine, concatenez calea catre ea si o deschid, retinand pe cate o linie
+din matricea X histograma corespunzatoare fiecarei imagini. Acelasi procedeu il aplic
+si pentru directorul cu poze fara pisici.
+
+	- Learn
+
+	Initializez matricea X_tilda cu toate elementele din matricea X, la care adaug
+o coloana de 1 la final. Factorizez cu Householder matricea X_tilda, dupa care rezolv
+sistemul superior triunghiular rezultat cu SST si memorez rezultatul in vectorul w.
+
+	- Evaluate
+
+	Initializez, pe baza functiei de preprocesare, matricea X si vectorul y. Calculez
+X_tilda. Pentru fiecare imagine calculez produsul dintre linia vectorului w' si linia
+transpusa corespunzatoare imaginii. Daca produsul este pozitiv, inseamna ca este o poza
+cu o pisica si trebuie verificata valoarea pozei din vectorul y. Daca valoarea este 1
+inseamna ca algoritmul a recunoscut corect poza si maresc un contor "correct". La fel
+si pentru pozele fara pisici.
+La final impart numarul total de poze la cel de poze recunoscute corect si aflu procentul.
+
+	- Referinte:
+
+	Algoritmul Householder a fost implementat la laborator si este postata o varianta
+a lui si pe Moodle-ul ACS.
+
+	Task 4
+
+	- Learn
+
+	Initializez matricea X_tilda cu 0. Scalez elementele din X si le adaug in X_tilda.
+Adaug o ultima coloana de 1 in X_tilda. 
+	Aleg valori random din intervalul [-0.1,0.1] si il initializez pe w. 
+	De un numar epochs de ori aleg batch_size linii random din X_tilda si y si calculez, pe baza
+algoritmului dat in enunt, w. 
+
+	- Evaluate
+
+	Algoritmul este identic cu cel de la task-ul 3, singura diferenta este ca X_tilda
+este scalat. 
+
+
+	Feedback:
+
+	Tema a fost una interesanta, pentru ca toate task-urile au aplicatii practice
+si sunt folosite in diverse domenii, dupa cum scrie si in enuntul temei. Mi s-a parut
+utila pentru ca s-a bazat in mare parte si pe o familiarizare mai buna a noastra cu
+moduri de a vectoriza si cu limbajul utilizat in Octave.
+	Enunturile nu au fost intotdeauna prea clare si majoritatea ar fi avut nevoie
+de completari sau de o exprimare mai clara. Nu stiam intotdeauna de unde sa incep
+pentru ca nu intelegeam foarte rapid ce este explicat in enunt.
+	Au fost foarte utile functiile schelet si sunt o idee buna pentru orientare.
+De asemenea, apreciez implicarea de pe forum a echipei pentru a ne raspunde la intrebari.
+
+
